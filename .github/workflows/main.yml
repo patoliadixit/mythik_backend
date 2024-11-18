@@ -1,0 +1,23 @@
+name: Spring Boot CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main  
+
+
+jobs:
+  build:
+    runs-on: [self-hosted] 
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          clean: false
+          
+      - name: Build with Gradle
+        run: ./gradlew build --no-daemon
+
+      - name: Run Tests
+        run: mvn test
