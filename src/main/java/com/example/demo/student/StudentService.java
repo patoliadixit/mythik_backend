@@ -37,6 +37,7 @@ public class StudentService {
         .orElseThrow(() -> new RuntimeException("No student found with the id " + id));
     student.setFirstName(inputStudent.getFirstName());
     student.setLastName(inputStudent.getLastName());
+    student.setAge(inputStudent.getAge());
     return studentRepository.save(student);
   }
 
