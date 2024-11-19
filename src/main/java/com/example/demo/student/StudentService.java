@@ -57,20 +57,45 @@ public class StudentService {
   private CompletableFuture<Student> updateStudentAsync(Student student) {
     Student existingStudent = studentRepository.findById(student.getId())
         .orElseThrow(() -> new RuntimeException("No student found with the id " + student.getId()));
-    existingStudent.setFirstName(student.getFirstName());
-    existingStudent.setLastName(student.getLastName());
-    existingStudent.setAge(student.getAge());
+    existingStudent.setAge(existingStudent.getAge() + 1);
     Student updatedStudent = studentRepository.save(existingStudent);
     return CompletableFuture.completedFuture(updatedStudent);
   }
 
-  public List<Student> updateMultipleStudents(List<Student> students) {
+  public List<Student> updateMultipleStudents() {
+    List<Student> students = studentRepository.findAll();
+    List<CompletableFuture<Student>> futures = students.stream()
+        .map(this::updateStudentAsync)
+        .collect(Collectors.toList());
+    CompletableFuture<Void> allOf = CompletableFuture.allOf(
+        futures.toArray(new CompletableFuture[futures.size()]));
+
+    try {
+      allOf.join();
+      return futures.stream()
+          .map(CompletableFuture::join)
+          .collect(Collectors.toList());
+    } catch (Exception e) {
+      throw new RuntimeException("Error updating students: " + e.getMessage());
+    }
+  }
+
+  @Async
+  private CompletableFuture<Student> updateStudentAgeByOneAsync(Long student_id) {
+    Student existingStudent = studentRepository.findById(student_id)
+        .orElseThrow(() -> new RuntimeException("No student found with the id " + student_id));
+    existingStudent.setAge(existingStudent.getAge() + 1);
+    Student updatedStudent = studentRepository.save(existingStudent);
+    return CompletableFuture.completedFuture(updatedStudent);
+  }
+
+  public List<Student> updateMultipleStudentsAgeByOneYear(List<Student> students) {
     List<CompletableFuture<Student>> futures = students.stream()
         .map(this::updateStudentAsync)
         .collect(Collectors.toList());
 
     CompletableFuture<Void> allOf = CompletableFuture.allOf(
-        futures.toArray(new CompletableFuture[0]));
+        futures.toArray(new CompletableFuture[futures.size()]));
 
     try {
       allOf.join();

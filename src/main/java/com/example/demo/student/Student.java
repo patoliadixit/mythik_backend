@@ -1,11 +1,9 @@
 package com.example.demo.student;
 
-import java.util.List;
 import java.util.Set;
 
 import com.example.demo.subject.Subject;
 
-import jakarta.annotation.Generated;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;

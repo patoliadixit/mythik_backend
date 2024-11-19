@@ -26,8 +26,8 @@ public class StudentController {
   }
 
   @PostMapping("/update-multiple")
-  public List<Student> updateMultipleStudents(@RequestBody List<Student> students) {
-    return studentService.updateMultipleStudents(students);
+  public List<Student> updateMultipleStudents() {
+    return studentService.updateMultipleStudents();
   }
 
   @GetMapping("/{id}")
